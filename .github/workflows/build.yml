@@ -34,6 +34,4 @@ jobs:
         with:
           name: build-artifacts
           path: |
-            build/libs/**/*.jar
-            build/reports/**/*.html
-            build/*.zip
+            app/build/*
