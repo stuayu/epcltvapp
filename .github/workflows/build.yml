@@ -17,6 +17,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
+          distribution: microsoft
           java-version: '11'  # または必要な Java バージョン
 
       - name: Setup Gradle
