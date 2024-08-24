@@ -341,6 +341,7 @@ class VideoDetailsFragment : DetailsSupportFragment() {
 
         // 新しい正規表現を定義
         val regexTitleExtraction = """^(?:\[[^\]]*\]|\【[^】]*\】|\(吹\)|［[^］]*］)?\s*([^\d【【\s\[\]\d]+(?:\s*[^\d【【\s\[\]]+)*?)\s*(?:＃\d+|第[0-9０-９]+[話回]|【[^】]*\】|\[\d*\])?.*""".toRegex()
+        val regexDeleteStr = """^(\[[新字デ解再無映終多]\])|\(吹\)""".toRegex()
 
         // 元のタイトルに対する処理
         val originalTitle: String = if (mSelectedRecordedProgram != null) mSelectedRecordedProgram!!.name
