@@ -29,9 +29,19 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
+      - name: Release with Gradle
+        run: ./gradlew assembleRelease
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: build-artifacts
           path: |
             app/build/*
+
+      - name: Upload Release artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Release-APK
+          path: |
+            app/build/outputs/apk/release
