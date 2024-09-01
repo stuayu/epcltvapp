@@ -16,6 +16,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import kotlin.properties.Delegates
+import androidx.appcompat.R as AppCompatR
 
 /**
  * A OriginalCardPresenter is used to generate Views and bind Objects to them on demand.
@@ -58,7 +59,7 @@ class OriginalCardPresenter() : Presenter() {
 
         viewHolder.view.setOnLongClickListener{
 
-            AlertDialog.Builder(it.context, R.style.Theme_AppCompat_Light_Dialog_MinWidth)
+            AlertDialog.Builder(it.context, AppCompatR.style.Theme_AppCompat_Light_Dialog_MinWidth)
                 .setTitle(it.context.getString(R.string.do_you_want_to_delete,cardView.titleText.toString()))
                 .setPositiveButton(it.context.getString(R.string.delete)) { dialog, which ->
                     when (item) {
