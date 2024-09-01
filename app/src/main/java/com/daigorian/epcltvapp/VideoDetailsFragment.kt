@@ -339,33 +339,41 @@ class VideoDetailsFragment : DetailsSupportFragment() {
         //  - 現在表示中の動画の名前にregexDelimiterがあれば、その前までの文字列をシリーズ名とみなして一覧を表示
         //  - 現在表示中の動画と同じルールIDを持った動画を検索して一覧を表示
 
-        // 新しい正規表現を定義
-        val regexTitleExtraction = """^(?:\[[^\]]*\]|\【[^】]*\】|\(吹\)|［[^］]*］)?\s*([^\d【【\s\[\]\d]+(?:\s*[^\d【【\s\[\]]+)*?)\s*(?:＃\d+|第[0-9０-９]+[話回]|【[^】]*\】|\[\d*\])?.*""".toRegex()
-        val regexDeleteStr = """^(\[[新字デ解再無映終多]\])|\(吹\)""".toRegex()
+        try {
+            // シリーズ名の抽出用正規表現
+            val regexDelimiter = """(?!^)(([\s　]?([#＃♯第][0-9０-９]{1,3}|[0-9０-９]{1,3}[話回]|\([0-9０-９]{1,3}\)|[「【『<])|\[[新字デ解再無映終多]\]|\(吹\))|([\s　][^0-9０-９\s　]+[\s　]?[0-9０-９]{2,3}|[一二三四五六七八九十]+話]))""".toRegex()
+            val regexDeleteStr = """^(\[[新字デ解再無映終多]\]|\(吹\)|<アニメギルド>|<アニおび>|日5|アニメA・|アニメ)""".toRegex()
 
-        // 元のタイトルに対する処理
-        val originalTitle: String = if (mSelectedRecordedProgram != null) mSelectedRecordedProgram!!.name
-                                    else mSelectedRecordedItem!!.name
 
-        // 行頭に[新]などがあった場合は消しておく
-        val programNameStriped = originalTitle.replace(regexDeleteStr, "")
+            // 番組名 originalTitle
+            val originalTitle :String =if(mSelectedRecordedProgram!=null) mSelectedRecordedProgram!!.name
+            else mSelectedRecordedItem!!.name
 
-        // 正規表現を使って正確なタイトルを抽出
-        val matchResult = regexTitleExtraction.find(programNameStriped)
-        val programName = matchResult?.groups?.get(1)?.value?.trim() ?: ""
+            // 行頭に[新]などがあった場合は消しておく
+            val programNameStriped = originalTitle.replace(regexDeleteStr,"").replace(regexDeleteStr,"").replace("\\s*第[一二三四五六七八九十]+話".toRegex(), "")
 
-        // 区切り文字が見つかった場合、シリーズとして表示する
-        if (programName.isNotEmpty()) {
-            val searchKeyword = programName
-            mAdapter.updateContentsListRow(
-                GetRecordedParam(keyword = searchKeyword),
-                GetRecordedParamV2(keyword = searchKeyword),
-                searchKeyword,
-                0,
-                mCardPresenter,
-                requireContext()
-            )
+            // 名前にregexDelimiterがあった場合はそこで区切る
+            val programName = programNameStriped.split(regexDelimiter)
+
+            // 区切り文字が見つかった場合、シリーズとして表示する
+            if (programName.isNotEmpty()) {
+                val searchKeyword = programName[0]
+                mAdapter.updateContentsListRow(
+                    GetRecordedParam(keyword = searchKeyword),
+                    GetRecordedParamV2(keyword = searchKeyword),
+                    searchKeyword,
+                    0,
+                    mCardPresenter,
+                    requireContext()
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // エラーログやエラー処理を追加することができます
+            // 例: Toastでエラーメッセージを表示する
+            Toast.makeText(context, "エラーが発生しました: ${e.message}", Toast.LENGTH_LONG).show()
         }
+
 
         val ruleId =if(mSelectedRecordedProgram!=null) mSelectedRecordedProgram!!.ruleId
         else mSelectedRecordedItem!!.ruleId
